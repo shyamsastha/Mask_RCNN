@@ -17,7 +17,7 @@ import scipy
 import skimage.color
 import skimage.io
 import skimage.transform
-import urllib.request
+import urllib
 import shutil
 import warnings
 from distutils.version import LooseVersion
@@ -438,10 +438,12 @@ def resize_image(image, min_dim=None, max_dim=None, min_scale=None, mode="square
     if max_dim and mode == "square":
         image_max = max(h, w)
         if round(image_max * scale) > max_dim:
-            scale = max_dim / image_max
+            #scale = max_dim / image_max
+            scale = float(max_dim) / float(image_max)
 
     # Resize image using bilinear interpolation
-    if scale != 1:
+    #if scale != 1:
+    if scale != 1.0:
         image = resize(image, (round(h * scale), round(w * scale)),
                        preserve_range=True)
 
@@ -842,8 +844,11 @@ def download_trained_weights(coco_model_path, verbose=1):
     """
     if verbose > 0:
         print("Downloading pretrained model to " + coco_model_path + " ...")
-    with urllib.request.urlopen(COCO_MODEL_URL) as resp, open(coco_model_path, 'wb') as out:
+    resp = urllib.urlopen(COCO_MODEL_URL)
+    with open(coco_model_path, 'wb') as out:
         shutil.copyfileobj(resp, out)
+    #with urllib.urlopen(COCO_MODEL_URL) as resp, open(coco_model_path, 'wb') as out:
+        #shutil.copyfileobj(resp, out)
     if verbose > 0:
         print("... done downloading pretrained model!")
 
